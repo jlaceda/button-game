@@ -34,17 +34,37 @@
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script>
    <script>
+    
+    var possibleColors = ["green", "red", "blue"];
 
-   function generateButtons() {
+    function generateButtons() {
 
-   var numberOfButtons = Math.floor(Math.random() * 10 + 3);
-   console.log(numberOfButtons);
+        var numberOfButtons = Math.floor(Math.random() * 10 + 3);
 
-   var possibleColors = ["green", "red", "blue"];
-   var randomIndex = Math.floor(Math.random() * possibleColors.length);
-   var randomColor = possibleColors[randomIndex];
+        for (let i = 0; i <= numberOfButtons; i++) {
+            var randomIndex = Math.floor(Math.random() * possibleColors.length);
+            var randomColor = possibleColors[randomIndex];
+            var colorBtn = $('<button>', {
+                text: randomColor, 
+                id: 'btn_' + i,
+                class: 'btn btn-primary ' + randomColor,
+                'data-color': randomColor,
+                click: function () {
 
-   }
+                var fridgeMagnet = $('<div>', {
+                    class: 'letter fridge-color',
+                    text: ($(this).attr("data-letter"))
+                });
+
+                $('#buttonContainer2').append($(this));
+                }
+
+            });
+            $('#buttonContainer1').append(colorBtn);
+            $('#buttonContainer1').append($('<br>'));
+        }
+
+    }
 
    generateButtons();
 //     for (var i = 0; i < letters.length; i++) {
