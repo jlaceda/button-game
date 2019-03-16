@@ -1,72 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-   <title>Color Buttons</title>
-</head>
+        <link rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous">
+        <style>
+           button {
+               margin: 2rem;
+           }
+           .green {
+               background-color: green;
+               border: green;
+           }
+           .green:hover,
+           .green:active {
+               background-color: rgb(42, 183, 42) !important;
+           } 
+           .red {
+               background-color: red;
+               border: red;
+           }
+           .red:active,
+           .red:hover {
+               background-color: rgb(244, 86, 86) !important;
+           }
+           .blue {
+               background-color: blue;
+               border: blue;
+           }
+           .blue:active,
+           .blue:hover {
+               background-color: rgb(76, 76, 246) !important;
+           }
+           #playagain
+           {
+               display: none;
+           }
+        </style>
+        <title>Color Buttons</title>
 
-<body>
+    </head>
 
-   <div class="container">
+    <body>
+        <div class="col-md-12"><h1 class="display-6" id="instructions"></h1></div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Points: <span id="points">0</span></h2>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-warning" id="playagain"
+                        onclick="resetGame()">play again</button>
+                </div>
+            </div>
+        </div>
 
-       <div class="row">
-           <div class="col-md-6">
-               <div id="buttonContainer1">
 
-               </div>
+        <div class="container-fluid">
 
-           </div>
-           <div class="col-md-6">
-               <div id="buttonContainer2">
-               </div>
-           </div>
-       </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="buttonContainer1" class="container">
+                    </div>
 
-   </div>
-   <script
-  src="https://code.jquery.com/jquery-3.3.1.min.js"
-  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-  crossorigin="anonymous"></script>
-   <script>
+                </div>
+                <div class="col-md-6">
+                    <div id="buttonContainer2" class="container">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+        <script>
     
     var possibleColors = ["green", "red", "blue"];
+    var chosenColor = "";
+    var notChosenColor = "";
+    var colorsArray = [];
+    var points = 0;
+
+    function resetGame()
+    {
+        $("#buttonContainer1").empty();
+        $("#buttonContainer2").empty();
+        $("#playagain").css('display','none');
+         chosenColor = "";
+     notChosenColor = "";
+     colorsArray = [];
+     points = 0;
+     while (colorsArray.indexOf(chosenColor) === -1)
+        {
+            generateButtons();
+            chosenColor = chooseColor();
+        }
+        
+        while (notChosenColor === chosenColor || notChosenColor === "") {
+            notChosenColor = chooseColor();
+        }
+        $("#instructions").addClass(notChosenColor);
+        $("#instructions").text("Click the " + chosenColor + " buttons.");
+        $("#points").text(points);
+    }
+
+    function chooseColor() {
+        var randomIndex = Math.floor(Math.random() * possibleColors.length);
+        return possibleColors[randomIndex];
+    }
+
+    function checkForWin()
+    {
+        if ($("#buttonContainer1 .row .btn." + chosenColor).length === 0)
+        {
+            $("#playagain").css('display','block');
+        }
+    }
 
     function generateButtons() {
-
         var numberOfButtons = Math.floor(Math.random() * 10 + 3);
-
         for (let i = 0; i <= numberOfButtons; i++) {
-            var randomIndex = Math.floor(Math.random() * possibleColors.length);
-            var randomColor = possibleColors[randomIndex];
+            randomColor = chooseColor();
+            colorsArray.push(randomColor);
+            var row = $('<div>').addClass('row');
             var colorBtn = $('<button>', {
-                text: randomColor, 
+                text: chooseColor(),
                 id: 'btn_' + i,
                 class: 'btn btn-primary ' + randomColor,
                 'data-color': randomColor,
                 click: function () {
-
-                var fridgeMagnet = $('<div>', {
-                    class: 'letter fridge-color',
-                    text: ($(this).attr("data-letter"))
-                });
-
-                $('#buttonContainer2').append($(this));
+                    if ($(this).attr('data-color') === chosenColor)
+                    {
+                        var row = $('<div>').addClass('row');
+                        $(row).append($(this));
+                        $('#buttonContainer2').append(row);
+                        points++;
+                    }
+                    else
+                    {
+                        points--;
+                    }
+                    $("#points").text(points);
+                    checkForWin();
                 }
-
             });
-            $('#buttonContainer1').append(colorBtn);
-            $('#buttonContainer1').append($('<br>'));
-        }
 
+            $(row).append(colorBtn);
+            $('#buttonContainer1').append(row);
+            
+        }
     }
 
-   generateButtons();
+    $(document).ready(function () {
+        
+        
+        resetGame();
+        
+        
+    });
+
+   
 //     for (var i = 0; i < letters.length; i++) {
 
 // var letterBtn = $('<button/>', {
@@ -96,6 +196,6 @@
 // $('#display').empty();
 // });
   </script>
-</body>
+    </body>
 
 </html>
